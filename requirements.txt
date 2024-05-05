@@ -1,0 +1,12 @@
+django
+django_tables2
+arabic_reshaper
+python-bidi
+sqlalchemy
+pandas
+jdatetime
+pytse-client
+redis
+tehran_stocks
+nest_asyncio
+requests.html

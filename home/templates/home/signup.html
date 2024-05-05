@@ -1,0 +1,78 @@
+{% load static %}
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Sedan:ital@0;1&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <div class="wrapper">
+            <nav>
+                <ul>
+                    <li>
+                        <a href="{% url 'home' %}" class="btn dark home-icon">
+                            Home
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- End of Navigation Bar -->
+
+            <div class="hero-section">
+                <div class="left">
+                    <h1>Your Share<br>Your Way</h1>
+                </div>
+        
+                <!-- End of Left Part -->
+                <div class="right">
+                    <h1>Create Account</h1>
+                    <form action="{% url 'signup'%}" method="post">{% csrf_token %}
+                        <!-- First Name -->
+                        <div class="fname">
+                            <div class="tag">First Name</div>
+                            {{form.first_name}}
+                        </div>
+                        <!-- Last Name -->
+                        <div class="lname">
+                            <div class="tag">Last Name</div>
+                            {{form.last_name}}
+                        </div>
+                        <!-- Email -->
+                        <div class="email">
+                            <div class="tag">Email</div>
+                            {{form.email}}
+                        </div>
+                        <!-- Username -->
+                        <div class="username">
+                            <div class="tag">Username</div>
+                            {{form.username}}
+                        </div>
+                        <!-- Password -->
+                        <div class="password">
+                            <div class="tag">Password</div>
+                            {{form.password1}}
+                        </div>
+                        <!-- Confirm Password -->
+                        <div class="confpassword">
+                            <div class="tag">Confirm Password</div>
+                            {{form.password2}}
+                        </div>
+                        <!-- Submit -->
+                        <input type="submit" value="Submit" class="submit">
+                    </form>
+                </div>
+                <div class="picture">
+                    <img src="{% static 'images/image.png' %}" alt=""/>
+                </div>
+            </div>
+        </div>
+    </header>
+</body>
+</html>
