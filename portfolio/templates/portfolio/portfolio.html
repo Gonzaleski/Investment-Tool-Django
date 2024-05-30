@@ -1,7 +1,18 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-<h1>Welcome to your portfolio</h1>
-
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-sm-8 text-center">
+            <h1 class="mb-4">Welcome to your Portfolio</h1>
+            <div class="d-grid gap-3">
+                <a href="{% url 'shares' %}" class="btn btn-primary btn-lg">View Shares</a>
+                <a href="{% url 'transactions' %}" class="btn btn-primary btn-lg">View Transactions</a>
+                <a href="{% url 'daily_price_list' %}" class="btn btn-warning btn-lg">View Gold and Dollar Prices</a>
+                <a href="{% url 'transaction_add' %}" class="btn btn-success btn-lg">Add a Transaction</a>
+                <a href="{% url 'share_add' %}" class="btn btn-success btn-lg">Add a Share</a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

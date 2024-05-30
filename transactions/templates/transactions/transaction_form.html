@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container my-5">
-    <h2 class="mb-4">{% if object %}Update{% else %}Add{% endif %} Share</h2>
+    <h2 class="mb-4">{% if object %}Update{% else %}Add{% endif %} Transaction</h2>
     <form method="post" class="needs-validation" novalidate>
         {% csrf_token %}
         <div class="row g-3">
@@ -23,8 +23,8 @@
             {% endfor %}
         </div>
         <div class="mt-4">
-            <button type="submit" class="btn btn-primary">{% if object %}Update{% else %}Add{% endif %} Share</button>
-            <a href="{% url 'shares' %}" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">{% if object %}Update{% else %}Add{% endif %} Transaction</button>
+            <a href="{% url 'transactions' %}" class="btn btn-secondary">Cancel</a>
         </div>
     </form>
 </div>

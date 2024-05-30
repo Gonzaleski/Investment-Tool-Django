@@ -1,13 +1,84 @@
 from django_tables2 import SingleTableView
-from django.views.generic import CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-
-from .models import Share
+from django.views.generic import CreateView, ListView, UpdateView
+from django.urls import reverse_lazy
+from django.utils import timezone
+from django.shortcuts import redirect
+from .models import Share, DailyPrice
 from .tables import ShareTable
+from .forms import ShareFilterForm, ShareForm, DailyPriceForm
+from django.db.models import Q
 
 class ShareView(LoginRequiredMixin, SingleTableView):
     model = Share
     table_class = ShareTable
-    context_object_name = 'share'
+    context_object_name = 'shares'
     template_name = 'share/share.html'
     login_url = 'login'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        # Search and filter logic
+        search_query = self.request.GET.get('search', '')
+        if search_query:
+            queryset = queryset.filter(
+                Q(symbol__icontains=search_query)
+            )
+
+        form = ShareFilterForm(self.request.GET)
+        if form.is_valid():
+            if form.cleaned_data['symbol']:
+                queryset = queryset.filter(symbol__icontains=form.cleaned_data['symbol'])
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = ShareFilterForm(self.request.GET)
+        context['search_query'] = self.request.GET.get('search', '')
+        
+        return context
+    
+class ShareCreateView(LoginRequiredMixin, CreateView):
+    model = Share
+    form_class = ShareForm
+    template_name = 'share/share_form.html'
+    success_url = reverse_lazy('shares')
+    login_url = 'login'
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+    
+
+class DailyPriceListView(LoginRequiredMixin, ListView):
+    model = DailyPrice
+    context_object_name = 'prices'
+    template_name = 'share/daily_price_list.html'
+    login_url = 'login'
+    
+    def get_queryset(self):
+        return DailyPrice.objects.filter(user=self.request.user)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['has_prices'] = self.get_queryset().exists()
+        return context
+
+class DailyPriceUpdateView(LoginRequiredMixin, UpdateView):
+    model = DailyPrice
+    form_class = DailyPriceForm
+    template_name = 'share/daily_price_form.html'
+    success_url = reverse_lazy('daily_price_list')
+    login_url = 'login'
+    
+    def get_object(self, queryset=None):
+        if DailyPrice.objects.filter(user=self.request.user).exists():
+            return DailyPrice.objects.filter(user=self.request.user).latest('date')
+        else:
+            return DailyPrice(user=self.request.user)
+    
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
