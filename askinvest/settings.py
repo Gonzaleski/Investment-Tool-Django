@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-lq1$4k2g-dq18x0-_(!uz&_r&g0sbv9lh*u2uw8(@ng%^civh_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'www.askinvestonline.com', 'askinvestonline.com']
+ALLOWED_HOSTS = ['www.askinvestonline.com', 'askinvestonline.com']
 
 
 # Application definition
@@ -145,3 +145,5 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/portfolio'
+
+CSRF_TRUSTED_ORIGINS = ["https://askinvestonline.com", "https://www.askinvestonline.com"]

@@ -5,3 +5,4 @@ jdatetime
 pytse-client
 redis
 requests.html
+persian
