@@ -1,7 +1,7 @@
 # forms.py
 from django import forms
 from .models import Transaction
-from share.models import DailyPrice
+from share.models import Share
 
 class TransactionFilterForm(forms.Form):
     TRANSACTION_TYPES = [
@@ -21,10 +21,11 @@ class TransactionFilterForm(forms.Form):
             field.widget.attrs.update({'class': 'form-control'})
 
 class TransactionForm(forms.ModelForm):
+    share = forms.CharField(widget=forms.TextInput(attrs={'id': 'share-autocomplete'}))
+
     class Meta:
         model = Transaction
         fields = ['share', 'type', 'portfo', 'date', 'price', 'quantity']
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}),
         }
-

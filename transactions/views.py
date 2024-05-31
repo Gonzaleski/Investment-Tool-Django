@@ -2,11 +2,14 @@
 from django_tables2 import SingleTableView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import CreateView, UpdateView, DeleteView
+from django.views.generic import CreateView, UpdateView, DeleteView, View
 from django.db.models import Q
 from .models import Transaction
 from .tables import TransactionTable
 from .forms import TransactionFilterForm, TransactionForm
+
+from django.http import JsonResponse
+from share.models import Share
 
 class TransactionView(LoginRequiredMixin, SingleTableView):
     model = Transaction
@@ -72,3 +75,13 @@ class TransactionDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_queryset(self):
         return Transaction.objects.filter(user=self.request.user)
+    
+class ShareAutocomplete(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        if 'term' in request.GET:
+            qs = Share.objects.filter(symbol__icontains=request.GET.get('term'))
+            symbols = list()
+            for share in qs:
+                symbols.append(share.symbol)
+            return JsonResponse(symbols, safe=False)
+        return JsonResponse([], safe=False)

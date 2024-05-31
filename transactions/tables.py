@@ -4,7 +4,6 @@ from .models import Transaction
 from django.urls import reverse_lazy
 
 class TransactionTable(tables.Table):
-    id = tables.Column(orderable=False)
     type = tables.Column(orderable=False)
     user = tables.Column(orderable=False, visible=False)
     symbol = tables.Column(orderable=False)
@@ -32,5 +31,5 @@ class TransactionTable(tables.Table):
     class Meta:
         model = Transaction
         template_name = "django_tables2/bootstrap4.html"
-        fields = ('id', 'type', 'symbol', 'portfo', 'date', 'price', 'quantity', 'total', 'dollar_price', 'gold_price', 'dollar_gain', 'gold_gain')
+        fields = ('type', 'symbol', 'portfo', 'date', 'price', 'quantity', 'total', 'dollar_price', 'gold_price', 'dollar_gain', 'gold_gain')
         per_page = 30
