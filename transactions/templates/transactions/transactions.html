@@ -33,7 +33,7 @@
                 <div class="input-group">
                     <input type="text" name="search" value="{{ search_query }}" class="form-control" placeholder="Search by symbol...">
                     <button type="submit" class="btn btn-primary">Search</button>
-                    <a href="{% url 'transaction_add' %}" class="btn btn-success ms-2">Add Transaction</a>
+                    <a href="{% url 'transaction_add' %}" class="btn btn-success ms-2">Add Transaction</a>  <!-- Its place should be changed -->
                 </div>
             </form>
             {% render_table table %}

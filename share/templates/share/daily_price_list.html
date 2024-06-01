@@ -1,32 +1,11 @@
 {% extends 'base.html' %}
-
+{% load render_table from django_tables2 %}
 {% block content %}
 <div class="container my-5">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2>Daily Prices</h2>
-        {% if not has_prices %}
-            <a href="{% url 'daily_price_update' %}" class="btn btn-success">Add Prices</a>
-        {% else %}
-            <a href="{% url 'daily_price_update' %}" class="btn btn-primary">Edit Prices</a>
-        {% endif %}
+        <a href="{% url 'daily_price_add' %}" class="btn btn-success">Add Prices</a>
     </div>
-    <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Gold Price</th>
-                <th>Dollar Price</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for price in prices %}
-            <tr>
-                <td>{{ price.date }}</td>
-                <td>{{ price.gold_price }}</td>
-                <td>{{ price.dollar_price }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    {% render_table table %}
 </div>
 {% endblock %}

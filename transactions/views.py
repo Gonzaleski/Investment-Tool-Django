@@ -7,6 +7,7 @@ from django.db.models import Q
 from .models import Transaction
 from .tables import TransactionTable
 from .forms import TransactionFilterForm, TransactionForm
+from django.contrib import messages
 
 from django.http import JsonResponse
 from share.models import Share
@@ -56,13 +57,22 @@ class TransactionCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.user = self.request.user
-        return super().form_valid(form)
+        try:
+            return super().form_valid(form)
+        except ValueError as e:
+            form.add_error(None, str(e))
+            return self.form_invalid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'There was an error with your submission. Please correct the errors below and try again.')
+        return super().form_invalid(form)
 
 class TransactionUpdateView(LoginRequiredMixin, UpdateView):
     model = Transaction
     form_class = TransactionForm
     template_name = 'transactions/transaction_form.html'
     success_url = reverse_lazy('transactions')
+    login_url = 'login'
 
     def get_queryset(self):
         return Transaction.objects.filter(user=self.request.user)

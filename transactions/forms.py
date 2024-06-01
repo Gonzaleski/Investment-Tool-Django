@@ -1,4 +1,3 @@
-# forms.py
 from django import forms
 from .models import Transaction
 from share.models import Share
@@ -29,3 +28,23 @@ class TransactionForm(forms.ModelForm):
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs.update({'class': 'form-control'})
+
+    def clean_share(self):
+        share_symbol = self.cleaned_data['share']
+        try:
+            share_instance = Share.objects.get(symbol=share_symbol)
+        except Share.DoesNotExist:
+            raise forms.ValidationError(f'Share with symbol {share_symbol} does not exist.')
+        return share_instance
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.share = self.cleaned_data['share']
+        if commit:
+            instance.save()
+        return instance

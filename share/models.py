@@ -30,12 +30,12 @@ class Share(models.Model):
 
 class DailyPrice(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='daily_prices')
-    date = models.DateField(auto_now_add=True)
+    date = models.DateField()
     gold_price = models.DecimalField(max_digits=10, decimal_places=2)
     dollar_price = models.DecimalField(max_digits=10, decimal_places=2)
 
     class Meta:
         unique_together = ('user', 'date')
-    
+
     def __str__(self):
         return f"{self.date} - {self.user.username}"

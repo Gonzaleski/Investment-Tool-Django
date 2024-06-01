@@ -1,11 +1,9 @@
 from django_tables2 import SingleTableView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import CreateView, ListView, UpdateView
+from django.views.generic import CreateView, ListView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from django.utils import timezone
-from django.shortcuts import redirect
 from .models import Share, DailyPrice
-from .tables import ShareTable
+from .tables import ShareTable, DailyPricesTable
 from .forms import ShareFilterForm, ShareForm, DailyPriceForm
 from django.db.models import Q
 
@@ -52,19 +50,27 @@ class ShareCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
     
 
-class DailyPriceListView(LoginRequiredMixin, ListView):
+class DailyPriceView(LoginRequiredMixin, SingleTableView):
     model = DailyPrice
-    context_object_name = 'prices'
+    table_class = DailyPricesTable
+    context_object_name = 'daily_prices'
     template_name = 'share/daily_price_list.html'
     login_url = 'login'
-    
+
     def get_queryset(self):
-        return DailyPrice.objects.filter(user=self.request.user)
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['has_prices'] = self.get_queryset().exists()
-        return context
+        queryset = super().get_queryset().filter(user=self.request.user)
+        return queryset
+
+class DailyPriceCreateView(LoginRequiredMixin, CreateView):
+    model = DailyPrice
+    form_class = DailyPriceForm
+    template_name = 'share/daily_price_form.html'
+    success_url = reverse_lazy('daily_price_list')
+    login_url = 'login'
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
 
 class DailyPriceUpdateView(LoginRequiredMixin, UpdateView):
     model = DailyPrice
@@ -72,13 +78,15 @@ class DailyPriceUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'share/daily_price_form.html'
     success_url = reverse_lazy('daily_price_list')
     login_url = 'login'
-    
-    def get_object(self, queryset=None):
-        if DailyPrice.objects.filter(user=self.request.user).exists():
-            return DailyPrice.objects.filter(user=self.request.user).latest('date')
-        else:
-            return DailyPrice(user=self.request.user)
-    
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
+
+    def get_queryset(self):
+        return DailyPrice.objects.filter(user=self.request.user)
+
+class DailyPriceDeleteView(LoginRequiredMixin, DeleteView):
+    model = DailyPrice
+    template_name = 'share/daily_price_confirm_delete.html'
+    success_url = reverse_lazy('daily_price_list')
+    login_url = 'login'
+
+    def get_queryset(self):
+        return DailyPrice.objects.filter(user=self.request.user)

@@ -5,8 +5,11 @@ from .models import Share, DailyPrice
 class DailyPriceForm(forms.ModelForm):
     class Meta:
         model = DailyPrice
-        fields = ['gold_price', 'dollar_price']
-    
+        fields = ['date', 'gold_price', 'dollar_price']
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date'}),
+        }
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():

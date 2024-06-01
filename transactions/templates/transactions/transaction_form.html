@@ -2,9 +2,25 @@
 {% block content %}
 <div class="container my-5">
     <h2 class="mb-4">{% if object %}Update{% else %}Add{% endif %} Transaction</h2>
+
+    {% if messages %}
+    <div class="alert alert-danger" role="alert">
+        {% for message in messages %}
+        <div{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <form method="post" class="needs-validation" novalidate>
         {% csrf_token %}
         <div class="row g-3">
+            {% if form.non_field_errors %}
+            <div class="col-md-12">
+                <div class="alert alert-danger">
+                    {{ form.non_field_errors }}
+                </div>
+            </div>
+            {% endif %}
             {% for field in form %}
             <div class="col-md-6">
                 <div class="form-group">
@@ -14,7 +30,7 @@
                     <div class="form-text">{{ field.help_text }}</div>
                     {% endif %}
                     {% if field.errors %}
-                    <div class="invalid-feedback">
+                    <div class="invalid-feedback d-block">
                         {{ field.errors|striptags }}
                     </div>
                     {% endif %}
