@@ -5,6 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView, UpdateView, DeleteView, View
 from django.db.models import Q
 from .models import Transaction
+from share.models import DailyPrice
 from .tables import TransactionTable
 from .forms import TransactionFilterForm, TransactionForm
 from django.contrib import messages
@@ -46,6 +47,11 @@ class TransactionView(LoginRequiredMixin, SingleTableView):
         context = super().get_context_data(**kwargs)
         context['form'] = TransactionFilterForm(self.request.GET)
         context['search_query'] = self.request.GET.get('search', '')
+        try:
+            latest_daily_price = DailyPrice.objects.latest('date')
+            context['latest_daily_price'] = latest_daily_price
+        except DailyPrice.DoesNotExist:
+            context['latest_daily_price'] = None
         return context
     
 class TransactionCreateView(LoginRequiredMixin, CreateView):

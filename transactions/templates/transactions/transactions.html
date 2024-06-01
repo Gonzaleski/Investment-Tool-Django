@@ -3,6 +3,21 @@
 {% block content %}
 <div class="container my-5">
     <div class="row">
+        {% if latest_daily_price %}
+        <div class="alert alert-info">
+            <h4 class="alert-heading">Latest Daily Prices</h4>
+            <hr>
+            <p><strong>Dollar Price:</strong> {{ latest_daily_price.dollar_price }}</p>
+            <p><strong>Gold Price:</strong> {{ latest_daily_price.gold_price }}</p>
+        </div>
+        {% else %}
+        <div class="alert alert-warning">
+            <h4 class="alert-heading">No Daily Prices Available</h4>
+            <p>There are currently no daily prices available.</p>
+        </div>
+        {% endif %}
+    </div>
+    <div class="row">
         <div class="col-md-2">
             <h4>Filter Transactions</h4>
             <form method="get">
