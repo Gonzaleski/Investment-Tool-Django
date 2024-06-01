@@ -1,6 +1,8 @@
 from django import forms
 from .models import Transaction
 from share.models import Share
+from jalali_date.fields import JalaliDateField
+from jalali_date.widgets import AdminJalaliDateWidget
 
 class TransactionFilterForm(forms.Form):
     TRANSACTION_TYPES = [
@@ -30,9 +32,12 @@ class TransactionForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(TransactionForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             field.widget.attrs.update({'class': 'form-control'})
+        self.fields['date'] = JalaliDateField(label=('date'),               # date format is  "yyyy-mm-dd"
+                                              widget=AdminJalaliDateWidget  # optional, to use default datepicker
+                                              )
 
     def clean_share(self):
         share_symbol = self.cleaned_data['share']
