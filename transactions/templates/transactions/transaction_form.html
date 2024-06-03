@@ -1,7 +1,10 @@
 {% extends 'base.html' %}
-{% load jalali_tags %}
 {% load static %}
 {% block content %}
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/@majidh1/jalalidatepicker/dist/jalalidatepicker.min.css">
+    <script type="text/javascript" src="https://unpkg.com/@majidh1/jalalidatepicker/dist/jalalidatepicker.min.js"></script>
+</head>
 <div class="container my-5">
     <h2 class="mb-4">{% if object %}Update{% else %}Add{% endif %} Transaction</h2>
 
@@ -51,40 +54,34 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
-<script src="{% static 'admin/js/django_jalali.min.js' %}"></script>
-<link rel="stylesheet" href="{% static 'admin/jquery.ui.datepicker.jalali/themes/base/jquery-ui.min.css' %}">
-
 <script>
     $(function() {
         $("#share-autocomplete").autocomplete({
             source: "{% url 'share_autocomplete' %}",
             minLength: 2,
         });
-        
-        // Initialize Jalali Datepicker
-        $.datepicker.setDefaults($.datepicker.regional['fa']);
-        $('.jalali_date-date').datepicker();
     });
-</script>
 
-<script>
-    // Example starter JavaScript for disabling form submissions if there are invalid fields
     (function () {
         'use strict'
-        // Fetch all the forms we want to apply custom Bootstrap validation styles to
         var forms = document.querySelectorAll('.needs-validation')
-        // Loop over them and prevent submission
         Array.prototype.slice.call(forms)
             .forEach(function (form) {
                 form.addEventListener('submit', function (event) {
                     if (!form.checkValidity()) {
                         event.preventDefault()
                         event.stopPropagation()
+                    } else {
+                        var jalaliDate = $('input[name="date"]').val();
+                        if (jalaliDate) {
+                            var formattedDate = jalaliDate.replace(/\//g, '-');
+                            $('input[name="date"]').val(formattedDate);
+                        }
                     }
                     form.classList.add('was-validated')
                 }, false)
             })
-    })()
+    })();
+    jalaliDatepicker.startWatch();
 </script>
-{{ form.media }}
 {% endblock %}

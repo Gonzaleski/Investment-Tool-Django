@@ -2,6 +2,7 @@ import django_tables2 as tables
 from django.utils.html import format_html
 from .models import Transaction
 from django.urls import reverse_lazy
+import jdatetime
 
 class TransactionTable(tables.Table):
     type = tables.Column(orderable=False)
@@ -18,6 +19,12 @@ class TransactionTable(tables.Table):
     gold_gain = tables.Column(orderable=False)
     
     actions = tables.Column(orderable=False, empty_values=(), verbose_name='Actions')
+
+    def render_date(self, value):
+        # Convert Gregorian date to Jalali date
+        gregorian_date = value
+        jalali_date = jdatetime.date.fromgregorian(date=gregorian_date)
+        return jalali_date.strftime('%Y-%B-%d')
 
     def render_actions(self, record):
         update_url = reverse_lazy('transaction_update', args=[record.pk])

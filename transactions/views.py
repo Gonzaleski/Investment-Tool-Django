@@ -12,6 +12,7 @@ from django.contrib import messages
 
 from django.http import JsonResponse
 from share.models import Share
+import jdatetime
 
 class TransactionView(LoginRequiredMixin, SingleTableView):
     model = Transaction
@@ -37,9 +38,13 @@ class TransactionView(LoginRequiredMixin, SingleTableView):
             if form.cleaned_data['portfo']:
                 queryset = queryset.filter(portfo__icontains=form.cleaned_data['portfo'])
             if form.cleaned_data['date_from']:
-                queryset = queryset.filter(date__gte=form.cleaned_data['date_from'])
+                date_from = form.cleaned_data['date_from']
+                gregorian_date_from = jdatetime.date.togregorian(date_from)
+                queryset = queryset.filter(date__gte=gregorian_date_from)
             if form.cleaned_data['date_to']:
-                queryset = queryset.filter(date__lte=form.cleaned_data['date_to'])
+                date_to = form.cleaned_data['date_to']
+                gregorian_date_to = jdatetime.date.togregorian(date_to)
+                queryset = queryset.filter(date__lte=gregorian_date_to)
         
         return queryset
     
@@ -48,7 +53,7 @@ class TransactionView(LoginRequiredMixin, SingleTableView):
         context['form'] = TransactionFilterForm(self.request.GET)
         context['search_query'] = self.request.GET.get('search', '')
         try:
-            latest_daily_price = DailyPrice.objects.latest('date')
+            latest_daily_price = DailyPrice.objects.filter(user=self.request.user).latest('date')
             context['latest_daily_price'] = latest_daily_price
         except DailyPrice.DoesNotExist:
             context['latest_daily_price'] = None

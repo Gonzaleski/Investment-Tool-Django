@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% load render_table from django_tables2 %}
 {% block content %}
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/@majidh1/jalalidatepicker/dist/jalalidatepicker.min.css">
+    <script type="text/javascript" src="https://unpkg.com/@majidh1/jalalidatepicker/dist/jalalidatepicker.min.js"></script>
+</head>
 <div class="container my-5">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2>Daily Prices</h2>
@@ -8,4 +12,7 @@
     </div>
     {% render_table table %}
 </div>
+<script>
+    jalaliDatepicker.startWatch();
+</script>
 {% endblock %}

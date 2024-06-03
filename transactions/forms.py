@@ -13,8 +13,8 @@ class TransactionFilterForm(forms.Form):
     
     type        = forms.ChoiceField(choices=TRANSACTION_TYPES, required=False)
     portfo      = forms.CharField(max_length=100, required=False)
-    date_from   = forms.DateField(required=False, widget=forms.TextInput(attrs={'type': 'date'}))
-    date_to     = forms.DateField(required=False, widget=forms.TextInput(attrs={'type': 'date'}))
+    date_from   = forms.DateField(required=False, widget=forms.TextInput(attrs={'data-jdp' : ""}))
+    date_to     = forms.DateField(required=False, widget=forms.TextInput(attrs={'data-jdp' : ""}))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -27,17 +27,15 @@ class TransactionForm(forms.ModelForm):
     class Meta:
         model = Transaction
         fields = ['share', 'type', 'portfo', 'date', 'price', 'quantity']
-        widgets = {
-            'date': forms.DateInput(attrs={'type': 'date'}),
-        }
 
     def __init__(self, *args, **kwargs):
         super(TransactionForm, self).__init__(*args, **kwargs)
+        self.fields['date'] = JalaliDateField(label=('date')) # date format is  "yyyy-mm-dd"
         for field_name, field in self.fields.items():
-            field.widget.attrs.update({'class': 'form-control'})
-        self.fields['date'] = JalaliDateField(label=('date'),               # date format is  "yyyy-mm-dd"
-                                              widget=AdminJalaliDateWidget  # optional, to use default datepicker
-                                              )
+            if field_name == "date":
+                field.widget.attrs.update({'class': 'form-control', 'data-jdp' : ""})
+            else:
+                field.widget.attrs.update({'class': 'form-control'})
 
     def clean_share(self):
         share_symbol = self.cleaned_data['share']

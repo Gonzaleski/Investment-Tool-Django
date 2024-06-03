@@ -1,12 +1,38 @@
 {% extends 'base.html' %}
-
 {% block content %}
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/@majidh1/jalalidatepicker/dist/jalalidatepicker.min.css">
+    <script type="text/javascript" src="https://unpkg.com/@majidh1/jalalidatepicker/dist/jalalidatepicker.min.js"></script>
+</head>
 <div class="container my-5">
     <h2>Edit Daily Prices</h2>
-    <form method="post">
+    <form method="post" class="needs-validation" novalidate>
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit" class="btn btn-primary">Save</button>
     </form>
 </div>
+<script>
+    (function () {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    } else {
+                        var jalaliDate = document.querySelector('input[name="date"]').value;
+                        if (jalaliDate) {
+                            var formattedDate = jalaliDate.replace(/\//g, '-');
+                            document.querySelector('input[name="date"]').value = formattedDate;
+                        }
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+    })();
+    jalaliDatepicker.startWatch();
+</script>
 {% endblock %}

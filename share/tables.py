@@ -2,6 +2,7 @@ import django_tables2 as tables
 from .models import Share, DailyPrice
 from django.urls import reverse_lazy
 from django.utils.html import format_html
+import jdatetime
 
 class ShareTable(tables.Table):
     symbol = tables.Column(orderable=False)
@@ -23,6 +24,12 @@ class DailyPricesTable(tables.Table):
     gold_price = tables.Column(orderable=False)
     
     actions = tables.Column(orderable=False, empty_values=(), verbose_name='Actions')
+
+    def render_date(self, value):
+        # Convert Gregorian date to Jalali date
+        gregorian_date = value
+        jalali_date = jdatetime.date.fromgregorian(date=gregorian_date)
+        return jalali_date.strftime('%Y-%B-%d')
 
     def render_actions(self, record):
         update_url = reverse_lazy('daily_price_update', args=[record.pk])

@@ -1,8 +1,6 @@
 from django.urls import path
 from .views import TransactionView, TransactionCreateView, TransactionUpdateView, TransactionDeleteView, ShareAutocomplete
 
-from . import views
-
 urlpatterns = [
     path('transactions', TransactionView.as_view(), name='transactions'),
     path('transactions/add/', TransactionCreateView.as_view(), name='transaction_add'),
