@@ -1,6 +1,6 @@
 from django import forms
 from .models import Transaction
-from share.models import Share
+from share.models import Share, DailyPrice
 from jalali_date.fields import JalaliDateField
 from jalali_date.widgets import AdminJalaliDateWidget
 
@@ -22,18 +22,22 @@ class TransactionFilterForm(forms.Form):
             field.widget.attrs.update({'class': 'form-control'})
 
 class TransactionForm(forms.ModelForm):
-    symbol = forms.CharField(widget=forms.TextInput(attrs={'id': 'share-autocomplete'}))
+    symbol          = forms.CharField(widget=forms.TextInput(attrs={'id': 'share-autocomplete'}))
+    gold_price      = forms.DecimalField(required=False, max_digits=10, decimal_places=2)
+    dollar_price    = forms.DecimalField(required=False, max_digits=10, decimal_places=2)
 
     class Meta:
-        model = Transaction
-        fields = ['symbol', 'type', 'portfo', 'date', 'price', 'quantity']
+        model   = Transaction
+        fields  = ['symbol', 'type', 'portfo', 'date', 'price', 'quantity', 'gold_price', 'dollar_price']
 
     def __init__(self, *args, **kwargs):
         super(TransactionForm, self).__init__(*args, **kwargs)
         self.fields['date'] = JalaliDateField(label=('date'))  # date format is "yyyy-mm-dd"
 
         if self.instance and self.instance.pk:
-            self.fields['symbol'].initial = self.instance.share.symbol
+            self.fields['symbol'].initial       = self.instance.share.symbol
+            self.fields['gold_price'].initial   = self.instance.daily_price.gold_price if self.instance.daily_price else None
+            self.fields['dollar_price'].initial = self.instance.daily_price.dollar_price if self.instance.daily_price else None
 
         for field_name, field in self.fields.items():
             if field_name == "date":
@@ -42,11 +46,26 @@ class TransactionForm(forms.ModelForm):
                 field.widget.attrs.update({'class': 'form-control'})
 
     def save(self, commit=True):
-        instance = super(TransactionForm, self).save(commit=False)
-        symbol = self.cleaned_data.get('symbol')
+        instance        = super(TransactionForm, self).save(commit=False)
+        symbol          = self.cleaned_data.get('symbol')
+        gold_price      = self.cleaned_data.get('gold_price')
+        dollar_price    = self.cleaned_data.get('dollar_price')
+        
         if symbol:
             instance.share, created = Share.objects.get_or_create(symbol=symbol)
         
         if commit:
+            # Ensure that the daily_price is correctly set and updated
+            if not instance.daily_price:
+                instance.daily_price, created = DailyPrice.objects.get_or_create(
+                    user=instance.user, 
+                    date=instance.date,
+                    defaults={'gold_price': gold_price or 0, 'dollar_price': dollar_price or 0}
+                )
+            else:
+                instance.daily_price.gold_price     = gold_price
+                instance.daily_price.dollar_price   = dollar_price
+                instance.daily_price.save()
+
             instance.save()
         return instance
