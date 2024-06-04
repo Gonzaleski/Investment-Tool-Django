@@ -30,13 +30,23 @@ class TransactionForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(TransactionForm, self).__init__(*args, **kwargs)
-        self.fields['date'] = JalaliDateField(label=('date')) # date format is  "yyyy-mm-dd"
+        self.fields['date'] = JalaliDateField(label=('date'))  # date format is "yyyy-mm-dd"
 
         if self.instance and self.instance.pk:
             self.fields['symbol'].initial = self.instance.share.symbol
-            
+
         for field_name, field in self.fields.items():
             if field_name == "date":
-                field.widget.attrs.update({'class': 'form-control', 'data-jdp' : ""})
+                field.widget.attrs.update({'class': 'form-control', 'data-jdp': ""})
             else:
                 field.widget.attrs.update({'class': 'form-control'})
+
+    def save(self, commit=True):
+        instance = super(TransactionForm, self).save(commit=False)
+        symbol = self.cleaned_data.get('symbol')
+        if symbol:
+            instance.share, created = Share.objects.get_or_create(symbol=symbol)
+        
+        if commit:
+            instance.save()
+        return instance

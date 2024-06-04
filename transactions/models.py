@@ -52,14 +52,9 @@ class Transaction(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.daily_price:
-            try:
-                self.daily_price = DailyPrice(
-                    user=self.user, 
-                    date=self.date,
-                    gold_price=0,
-                    dollar_price=0
-                )
-                self.daily_price.save()
-            except DailyPrice.DoesNotExist:
-                raise ValueError("No DailyPrice entry available for the selected date.")
+            self.daily_price, created = DailyPrice.objects.get_or_create(
+                user=self.user, 
+                date=self.date,
+                defaults={'gold_price': 0, 'dollar_price': 0}
+            )
         super().save(*args, **kwargs)
