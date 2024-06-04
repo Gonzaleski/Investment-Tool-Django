@@ -22,32 +22,21 @@ class TransactionFilterForm(forms.Form):
             field.widget.attrs.update({'class': 'form-control'})
 
 class TransactionForm(forms.ModelForm):
-    share = forms.CharField(widget=forms.TextInput(attrs={'id': 'share-autocomplete'}))
+    symbol = forms.CharField(widget=forms.TextInput(attrs={'id': 'share-autocomplete'}))
 
     class Meta:
         model = Transaction
-        fields = ['share', 'type', 'portfo', 'date', 'price', 'quantity']
+        fields = ['symbol', 'type', 'portfo', 'date', 'price', 'quantity']
 
     def __init__(self, *args, **kwargs):
         super(TransactionForm, self).__init__(*args, **kwargs)
         self.fields['date'] = JalaliDateField(label=('date')) # date format is  "yyyy-mm-dd"
+
+        if self.instance and self.instance.pk:
+            self.fields['symbol'].initial = self.instance.share.symbol
+            
         for field_name, field in self.fields.items():
             if field_name == "date":
                 field.widget.attrs.update({'class': 'form-control', 'data-jdp' : ""})
             else:
                 field.widget.attrs.update({'class': 'form-control'})
-
-    def clean_share(self):
-        share_symbol = self.cleaned_data['share']
-        try:
-            share_instance = Share.objects.get(symbol=share_symbol)
-        except Share.DoesNotExist:
-            raise forms.ValidationError(f'Share with symbol {share_symbol} does not exist.')
-        return share_instance
-
-    def save(self, commit=True):
-        instance = super().save(commit=False)
-        instance.share = self.cleaned_data['share']
-        if commit:
-            instance.save()
-        return instance
