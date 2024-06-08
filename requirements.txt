@@ -7,4 +7,4 @@ redis
 requests.html
 persian
 django_jalali_date
-tehran_stocks
+python-dotenv
