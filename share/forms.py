@@ -3,6 +3,7 @@ from django import forms
 from .models import Share, DailyPrice
 from jalali_date.fields import JalaliDateField
 from jalali_date.widgets import AdminJalaliDateWidget
+from django.core.exceptions import ValidationError
 
 class DailyPriceForm(forms.ModelForm):
     class Meta:
@@ -17,6 +18,19 @@ class DailyPriceForm(forms.ModelForm):
                 field.widget.attrs.update({'class': 'form-control', 'data-jdp' : ""})
             else:
                 field.widget.attrs.update({'class': 'form-control'})
+
+    def clean_gold_price(self):
+        gold_price = self.cleaned_data.get('gold_price')
+        if gold_price is not None and gold_price <= 0:
+            raise ValidationError('Gold price must be greater than zero.')
+        return gold_price
+
+    def clean_dollar_price(self):
+        dollar_price = self.cleaned_data.get('dollar_price')
+        if dollar_price is not None and dollar_price <= 0:
+            raise ValidationError('Dollar price must be greater than zero.')
+        return dollar_price
+
 
 class ShareFilterForm(forms.Form):
     symbol = forms.CharField(max_length=100, required=False)
