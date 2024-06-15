@@ -90,3 +90,6 @@ venv/
 ENV/
 env/
 .venv/
+
+# tickers data
+tickers_data/
