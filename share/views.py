@@ -4,7 +4,7 @@ from django.views.generic import CreateView, ListView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from .models import Share, DailyPrice
 from .tables import ShareTable, DailyPricesTable
-from .forms import ShareFilterForm, ShareForm, DailyPriceForm
+from .forms import ShareFilterForm, DailyPriceForm
 from django.db.models import Q
 
 class ShareView(LoginRequiredMixin, SingleTableView):
@@ -37,18 +37,6 @@ class ShareView(LoginRequiredMixin, SingleTableView):
         context['search_query'] = self.request.GET.get('search', '')
         
         return context
-    
-class ShareCreateView(LoginRequiredMixin, CreateView):
-    model = Share
-    form_class = ShareForm
-    template_name = 'share/share_form.html'
-    success_url = reverse_lazy('shares')
-    login_url = 'login'
-
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
-    
 
 class DailyPriceView(LoginRequiredMixin, SingleTableView):
     model = DailyPrice

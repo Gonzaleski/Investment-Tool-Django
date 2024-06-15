@@ -39,8 +39,3 @@ class ShareFilterForm(forms.Form):
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             field.widget.attrs.update({'class': 'form-control'})
-
-class ShareForm(forms.ModelForm):
-    class Meta:
-        model = Share
-        fields = ['symbol', 'price', 'minimum_price', 'maximum_price']

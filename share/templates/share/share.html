@@ -9,7 +9,6 @@
                 <div class="input-group">
                     <input type="text" name="search" value="{{ search_query }}" class="form-control" placeholder="Search by symbol...">
                     <button type="submit" class="btn btn-primary">Search</button>
-                    <a href="{% url 'share_add' %}" class="btn btn-success btn-lg ms-2">Add a Share</a>
                 </div>
             </form>
             {% render_table table %}
