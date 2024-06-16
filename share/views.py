@@ -1,10 +1,10 @@
 from django_tables2 import SingleTableView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import CreateView, ListView, UpdateView, DeleteView
+from django.views.generic import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from .models import Share, DailyPrice
-from .tables import ShareTable, DailyPricesTable
-from .forms import ShareFilterForm, DailyPriceForm
+from .models import Share, SharePrice, DailyPrice
+from .tables import ShareTable, SharePricesTable, DailyPricesTable
+from .forms import ShareFilterForm, SharePriceFilterForm, DailyPriceForm
 from django.db.models import Q
 
 class ShareView(LoginRequiredMixin, SingleTableView):
@@ -36,6 +36,30 @@ class ShareView(LoginRequiredMixin, SingleTableView):
         context['form'] = ShareFilterForm(self.request.GET)
         context['search_query'] = self.request.GET.get('search', '')
         
+        return context
+    
+class SharePriceView(LoginRequiredMixin, SingleTableView):
+    model = SharePrice
+    table_class = SharePricesTable
+    context_object_name = 'share_prices'
+    template_name = 'share/share_price_list.html'
+    login_url = 'login'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        # Filter logic
+        form = SharePriceFilterForm(self.request.GET)
+        if form.is_valid():
+            if form.cleaned_data['symbol']:
+                queryset = queryset.filter(share__symbol__icontains=form.cleaned_data['symbol'])
+            # Add more filter conditions as needed
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = SharePriceFilterForm(self.request.GET)
         return context
 
 class DailyPriceView(LoginRequiredMixin, SingleTableView):

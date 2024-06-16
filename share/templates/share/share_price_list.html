@@ -1,0 +1,24 @@
+<!-- share_price_list.html -->
+{% extends 'base.html' %}
+{% load render_table from django_tables2 %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md">
+            <h4>Filter Share Prices</h4>
+            <form method="get" class="mb-3">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-3">
+                        {{ form.symbol }}
+                    </div>
+                    <!-- Add more filter fields here as needed -->
+                </div>
+                <button type="submit" class="btn btn-primary mt-2">Filter</button>
+            </form>
+            {% render_table table %}
+        </div>
+    </div>
+</div>
+{% endblock %}

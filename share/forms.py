@@ -39,3 +39,12 @@ class ShareFilterForm(forms.Form):
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             field.widget.attrs.update({'class': 'form-control'})
+
+class SharePriceFilterForm(forms.Form):
+    symbol = forms.CharField(max_length=100, required=False)
+    # Add more fields for filtering options as needed
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs.update({'class': 'form-control'})
