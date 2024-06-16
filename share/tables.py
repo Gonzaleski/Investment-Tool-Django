@@ -5,12 +5,14 @@ from django.utils.html import format_html
 import jdatetime
 
 class ShareTable(tables.Table):
-    symbol = tables.Column(orderable=False)
+    symbol  = tables.Column(orderable=False)
+    title   = tables.Column(orderable=False)
+    group   = tables.Column(orderable=False)
 
     class Meta:
         model = Share
         template_name = "django_tables2/bootstrap4.html"
-        fields = ('symbol',)
+        fields = ('symbol', 'title', 'group')
         attrs = {'class': 'table'}
         per_page = 30
 
