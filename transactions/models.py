@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from share.models import Share, DailyPrice
+from share.models import Share, MinMax, DailyPrice
 
 class Transaction(models.Model):
     BUY = 'BUY'
@@ -40,14 +40,18 @@ class Transaction(models.Model):
     def dollar_gain(self):
         if self.dollar_price and self.quantity:
             today_price = DailyPrice.objects.latest('date').dollar_price
-            return round((today_price / self.dollar_price) * (self.share.maximum_price / self.price), 2)
+            share_price = MinMax.objects.filter(share=self.share).latest('date')
+            relevant_price = share_price.max if self.type == 'SELL' else share_price.min
+            return round((today_price / self.dollar_price) * (relevant_price / self.price), 2)
         return None
 
     @property
     def gold_gain(self):
         if self.gold_price and self.quantity:
             today_price = DailyPrice.objects.latest('date').gold_price
-            return round((today_price / self.gold_price) * (self.share.maximum_price / self.price), 2)
+            share_price = MinMax.objects.filter(share=self.share).latest('date')
+            relevant_price = share_price.max if self.type == 'SELL' else share_price.min
+            return round((today_price / self.gold_price) * (relevant_price / self.price), 2)
         return None
 
     def save(self, *args, **kwargs):

@@ -13,7 +13,6 @@ class Share(models.Model):
 class SharePrice(models.Model):
     share = models.ForeignKey(Share, on_delete=models.PROTECT, related_name='shares2prices')
     date = models.DateField()
-    datetime = models.DateTimeField()
     open = models.FloatField()
     high = models.FloatField()
     low = models.FloatField()
@@ -30,6 +29,15 @@ class SharePrice(models.Model):
 
     def __str__(self):
         return f"{self.symbol} on {self.date}"
+
+class MinMax(models.Model):
+    date = models.DateField()
+    share = models.ForeignKey(Share, on_delete=models.CASCADE, related_name='share2minmax')
+    min = models.IntegerField()
+    max = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.share} - Min:{self.min} Max:{self.max}"
 
 class DailyPrice(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='daily_prices')

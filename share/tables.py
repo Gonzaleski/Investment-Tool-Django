@@ -17,23 +17,22 @@ class ShareTable(tables.Table):
         per_page = 30
 
 class SharePricesTable(tables.Table):
-    symbol = tables.Column(accessor='share.symbol', verbose_name='Symbol')
-    date = tables.DateColumn(format='Y-m-d', verbose_name='Date')
-    datetime = tables.DateTimeColumn(verbose_name='Date Time')
-    open = tables.Column(verbose_name='Open')
-    high = tables.Column(verbose_name='High')
-    low = tables.Column(verbose_name='Low')
-    adj_close = tables.Column(verbose_name='Adj Close')
-    value = tables.Column(verbose_name='Value')
-    volume = tables.Column(verbose_name='Volume')
-    count = tables.Column(verbose_name='Count')
-    yesterday = tables.Column(verbose_name='Yesterday')
-    close = tables.Column(verbose_name='Close')
+    symbol = tables.Column(accessor='share.symbol', verbose_name='Symbol', orderable=False)
+    date = tables.DateColumn(format='Y-m-d', verbose_name='Date', orderable=False)
+    open = tables.Column(verbose_name='Open', orderable=False)
+    high = tables.Column(verbose_name='High', orderable=False)
+    low = tables.Column(verbose_name='Low', orderable=False)
+    adj_close = tables.Column(verbose_name='Adj Close', orderable=False)
+    value = tables.Column(verbose_name='Value', orderable=False)
+    volume = tables.Column(verbose_name='Volume', orderable=False)
+    count = tables.Column(verbose_name='Count', orderable=False)
+    yesterday = tables.Column(verbose_name='Yesterday', orderable=False)
+    close = tables.Column(verbose_name='Close', orderable=False)
 
     class Meta:
         model = SharePrice
         template_name = "django_tables2/bootstrap4.html"
-        fields = ('symbol', 'date', 'datetime', 'open', 'high', 'low', 'adj_close', 'value', 'volume', 'count', 'yesterday', 'close')
+        fields = ('symbol', 'date', 'open', 'high', 'low', 'adj_close', 'value', 'volume', 'count', 'yesterday', 'close')
         attrs = {'class': 'table'}
         per_page = 30
 
